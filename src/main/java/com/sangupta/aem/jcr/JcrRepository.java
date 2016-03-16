@@ -156,6 +156,10 @@ public class JcrRepository {
 		return node;
 	}
 	
+	public File getRootFolder() {
+		return this.rootFolder;
+	}
+	
 	/**
 	 * Initialize the meta-inf/vault folder
 	 * @throws IOException 
