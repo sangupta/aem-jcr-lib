@@ -14,6 +14,10 @@ import com.google.common.io.Resources;
 
 public class Utils {
 	
+	/**
+	 * Cache to resources already read from disk.
+	 * 
+	 */
 	private static Map<String, String> TEMPLATE_CACHE = new HashMap<>();
 
 	/**
@@ -43,7 +47,14 @@ public class Utils {
 		
 		return null;
 	}
-	
+
+	/**
+	 * Merge the given disk resource with given attributes using Velocity layout engine.
+	 * 
+	 * @param templateName
+	 * @param attributes
+	 * @return
+	 */
 	public static String mergeTemplate(String templateName, Map<String, Object> attributes) {
 		String xml = Utils.getDiskResource(templateName);
 		StringWriter writer = new StringWriter();

@@ -14,25 +14,61 @@ public class JcrRepository {
 
 	/**
 	 * The root folder where the JCR repository will be created
-	 * 
 	 */
 	private final File rootFolder;
 	
+	/**
+	 * The jcr_root folder inside the repo folder
+	 */
 	private final File jcrRoot;
 	
+	/**
+	 * The META-INF folder inside the repo folder
+	 */
 	private final File metaRoot;
+
+	/**
+	 * The name of the repository to initialize with
+	 */
+	private final String repoName;
 	
-	public JcrRepository(String rootFolder) {
-		this(new File(rootFolder));
-	}
+	/**
+	 * The username who is creating the repository
+	 */
+	private final String userName;
+	
+	/**
+	 * The group name of the package
+	 */
+	private final String groupName;
 	
 	/**
 	 * Construct the repository at the given path
 	 * 
+	 * @param repoName
+	 * @param userName
+	 * @param groupName
 	 * @param rootFolder
 	 */
-	public JcrRepository(File rootFolder) {
+	public JcrRepository(String repoName, String userName, String groupName, String rootFolder) {
+		this(repoName, userName, groupName, new File(rootFolder));
+	}
+	
+	/**
+	 * Construct the repository at the given folder
+	 * 
+	 * @param repoName
+	 * @param userName
+	 * @param groupName
+	 * @param rootFolder
+	 */
+	public JcrRepository(String repoName, String userName, String groupName, File rootFolder) {
+		this.repoName = repoName;
+		this.userName = userName;
+		this.groupName = groupName;
+		
 		this.rootFolder = rootFolder;
+		
 		this.jcrRoot = new File(this.rootFolder, "jcr_root");
 		this.metaRoot = new File(this.rootFolder, "META-INF");
 		
@@ -137,9 +173,9 @@ public class JcrRepository {
 		FileUtils.writeStringToFile(new File(vault, "nodetypes.cnd"), Utils.getDiskResource("vault/nodetypes.cnd"));
 		
 		Map<String, Object> properties = new HashMap<>();
-		properties.put("name", "aem-jcr-repository");
-		properties.put("user", "aem-jcr");
-		properties.put("group", "aem-jcr-group");
+		properties.put("name", this.repoName);
+		properties.put("user", this.userName);
+		properties.put("group", this.groupName);
 		FileUtils.writeStringToFile(new File(vault, "properties.xml"), Utils.mergeTemplate("vault/properties.xml", properties));
 		
 		
