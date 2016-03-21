@@ -14,13 +14,16 @@ JcrRepository repository = new JcrRepository("test-repo", "sangupta", "my-packag
 repository.initialize();
 
 // create a page component		
-JcrNode componentNode = repository.createComponent("/apps/sangupta/components/page/pageTemplate", "Page template", "foundation/components/page");
+JcrNode componentNode = repository.createComponent("/apps/sangupta/components/page/pageTemplate", "Page template", "foundation/components/page", "sangupta-components");
 
 // copy a basic template into this component
 componentNode.saveFile("pageTemplate.jsp", Utils.getDiskResource("basic-template.jsp"));
 
 // create a template and attach it to previously created component
 repository.createTemplate("/apps/sangupta/templates/dummy", "Dummy template", 10, "/apps/sangupta/components/page/pageTemplate");
+
+// update the repository paths to the ones that have some content in it
+repository.updateFilters(); 
 
 // create a ZIP package out of it
 AEMPackager.createPackage(repository, "c:/aem-work/sangupta.zip");
