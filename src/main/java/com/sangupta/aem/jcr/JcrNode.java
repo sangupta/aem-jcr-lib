@@ -20,6 +20,8 @@ import com.sangupta.jerry.util.AssertUtils;
 public class JcrNode {
 	
 	public static final Charset UTF_8 = Charset.forName("UTF-8");
+	
+	private final String path;
 
 	private final File nodePath;
 	
@@ -27,15 +29,23 @@ public class JcrNode {
 	
 	private final boolean isRoot;
 	
+	private final JcrRepository repository;
+	
 	private final Map<String, String> properties = new HashMap<String, String>();
 	
-	JcrNode(File path, boolean isRootNode) {
-		this.nodePath = path;
+	JcrNode(File nodePath, String path, boolean isRootNode, JcrRepository repository) {
+		this.nodePath = nodePath;
+		this.path = path;
 		this.xmlFile = new File(this.nodePath, ".content.xml");
 		this.isRoot = isRootNode;
+		this.repository = repository;
 		
 		// read the xml file if it already exists
 		this.readProperties();
+	}
+	
+	public JcrNode getChildNode(String nodePath) {
+		return this.repository.getNode(this.path + "/" + nodePath);
 	}
 	
 	/**

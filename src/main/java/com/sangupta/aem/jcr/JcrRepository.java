@@ -122,21 +122,22 @@ public class JcrRepository {
 		
 		if("/".equals(path)) {
 			// this is a root node request
-			return new JcrNode(this.jcrRoot, true);
+			return new JcrNode(this.jcrRoot, "/", true, this);
 		}
 		
 		File nodePath = new File(this.jcrRoot, path);
 		nodePath.mkdirs();
-		return new JcrNode(nodePath, "/".equals(path));
+		return new JcrNode(nodePath, path, "/".equals(path), this);
 	}
 	
-	public JcrNode createComponent(String path, String title, String parentComponent) throws IOException {
+	public JcrNode createComponent(String path, String title, String parentComponent, String componentGroup) throws IOException {
 		JcrNode node = getNode(path);
 		
 		Map<String, String> map = new HashMap<>();
 		map.put("jcr:primaryType", "cq:Component");
 		map.put("jcr:title", title);
 		map.put("sling:resourceSuperType", parentComponent);
+		map.put("componentGroup", componentGroup);
 		
 		node.initialize(map);
 		
