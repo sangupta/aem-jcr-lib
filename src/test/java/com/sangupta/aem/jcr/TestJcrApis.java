@@ -13,9 +13,11 @@ public class TestJcrApis {
 		
 		// make sure the requisite file structure is in place
 		
-		JcrNode componentNode = repository.createComponent("/apps/sangupta/components/page/pageTemplate", "Page template", "foundation/components/page");
+		JcrNode componentNode = repository.createComponent("/apps/sangupta/components/page/pageTemplate", "Page template", "foundation/components/page", "aem-test");
 		componentNode.saveFile("pageTemplate.jsp", Utils.getDiskResource("basic-template.jsp"));
 		repository.createTemplate("/apps/sangupta/templates/dummy", "Dummy template", 10, "/apps/sangupta/components/page/pageTemplate");
+		
+		repository.updateFilters();
 		
 		AEMPackager.createPackage(repository, "c:/aem-work/sangupta.zip");
 	}

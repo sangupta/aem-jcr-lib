@@ -2,13 +2,22 @@ package com.sangupta.aem.jcr;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.filefilter.TrueFileFilter;
+import org.apache.commons.lang.StringUtils;
 
 import com.sangupta.aem.Utils;
 import com.sangupta.aem.vault.VaultHelper;
+import com.sangupta.jerry.util.AssertUtils;
 
 public class JcrRepository {
 
@@ -185,8 +194,7 @@ public class JcrRepository {
 		
 		
 		// write filter.xml file
-		File filterXml = new File(vault, "filter.xml");
-		FileUtils.writeStringToFile(filterXml, VaultHelper.createVaultFilterXml(new String[] { "/apps/sangupta" }));
+		writeFilterXML(vault, VaultHelper.createVaultFilterXml(new String[] { "/apps/sangupta" }));
 		
 		// definition xml
 		File definition = new File(vault, "definition");
@@ -194,4 +202,70 @@ public class JcrRepository {
 		FileUtils.writeStringToFile(new File(definition, ".content.xml"), Utils.getDiskResource("vault/definition/.content.xml"));
 	}
 
+	/**
+	 * Update filter.xml and other files within the repository to current contents
+	 * on disk.
+	 * @throws IOException 
+	 * 
+	 */
+	public void updateFilters() throws IOException {
+		// read a list of all files within the repository.
+		Collection<File> files = FileUtils.listFiles(this.jcrRoot, TrueFileFilter.INSTANCE, TrueFileFilter.INSTANCE);
+		if(AssertUtils.isEmpty(files)) {
+			writeFilterXML(null, VaultHelper.createVaultFilterXml(null));
+			return;
+		}
+		
+		final String rootPath = this.jcrRoot.getAbsoluteFile().getAbsolutePath();
+		
+		Set<String> list = new HashSet<>();
+		for(File file : files) {
+			if(file.isDirectory()) {
+				continue;
+			}
+			
+			String path = file.getAbsoluteFile().getAbsolutePath();
+			path = path.substring(rootPath.length());
+			path = StringUtils.replaceChars(path, '\\', '/');
+			
+			if(AssertUtils.isEmpty(path)) {
+				continue;
+			}
+			
+			// check if file is inside META-INF
+			if(path.equals("/.content.xml")) {
+				// ignore
+				continue;
+			}
+			
+			// these files are the ones that have been added/modified
+			// now create the path structures from them
+			int index = path.lastIndexOf('/');
+			path = path.substring(0, index);
+			
+			list.add(path);
+		}
+		
+		// no file has been written in repository
+		if(AssertUtils.isNotEmpty(list)) {
+			writeFilterXML(null, VaultHelper.createVaultFilterXml(list.toArray(new String[] { })));
+			return;
+		}
+	}
+	
+	/**
+	 * Write the filter.xml file within the vault meta directory.
+	 * 
+	 * @param contents
+	 * @throws IOException 
+	 */
+	private void writeFilterXML(File vault, String contents) throws IOException {
+		if(vault == null) {
+			vault = new File(this.metaRoot, "vault");
+			vault.mkdirs();
+		}
+		
+		File filterXml = new File(vault, "filter.xml");
+		FileUtils.writeStringToFile(filterXml, contents);
+	}
 }
