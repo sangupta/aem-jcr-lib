@@ -1,7 +1,10 @@
 package com.sangupta.aem;
 
 import java.io.File;
+import java.io.IOException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.zeroturnaround.zip.ZipUtil;
 
 import com.sangupta.aem.jcr.JcrRepository;
@@ -15,7 +18,13 @@ import com.sangupta.aem.jcr.JcrRepository;
  */
 public class AEMPackager {
 	
-	public static boolean createPackage(JcrRepository repository, String zipFileToCreate) {
+	private static final Logger LOGGER = LoggerFactory.getLogger(AEMPackager.class);
+	
+	public static File createPackage(JcrRepository repository, String zipFileToCreate) {
+		if(repository == null) {
+			throw new IllegalArgumentException("Repository cannot be null");
+		}
+		
 		return createPackage(repository, new File(zipFileToCreate));
 	}
 
@@ -26,7 +35,7 @@ public class AEMPackager {
 	 * @param repository
 	 * @return
 	 */
-	public static boolean createPackage(JcrRepository repository, File zipFileToCreate) {
+	public static File createPackage(JcrRepository repository, File zipFileToCreate) {
 		if(zipFileToCreate == null) {
 			throw new IllegalArgumentException("zipFile to be created cannot be null");
 		}
@@ -35,7 +44,18 @@ public class AEMPackager {
 			throw new IllegalArgumentException("zipFile to be created does not represent a valid file");
 		}
 
+		// this helps in making sure that all content will be imported into AEM 
+		try {
+			repository.updateFilters();
+		} catch (IOException e) {
+			LOGGER.error("Unable to update filter information in repository", e);
+		}
+		
+		// pack now
 		ZipUtil.pack(repository.getRootFolder(), zipFileToCreate);
-		return true;
+		
+		// return the file that was created
+		return zipFileToCreate;
 	}
+	
 }
