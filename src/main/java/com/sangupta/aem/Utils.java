@@ -11,6 +11,8 @@ import org.apache.velocity.app.Velocity;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
+import com.sangupta.jerry.util.AssertUtils;
+import com.sangupta.jerry.util.UriUtils;
 
 public class Utils {
 	
@@ -62,6 +64,57 @@ public class Utils {
 		Velocity.evaluate(context, writer, "velocity-merge", xml);
 		
 		return writer.toString();
+	}
+
+	public static String extractPath(String url) {
+		if(AssertUtils.isEmpty(url)) {
+			return url;
+		}
+		
+		String path = UriUtils.extractPath(url);
+		int index = path.lastIndexOf('/');
+		if(index == -1) {
+			return path;
+		}
+		
+		return path.substring(0, index);
+	}
+
+	public static String removeExtension(String path) {
+		int slash = path.lastIndexOf('/');
+		int dot = path.lastIndexOf('.');
+		if(dot < slash) {
+			return path;
+		}
+		
+		return path.substring(0, dot);
+	}
+
+	public static String escapeAttributeName(String key) {
+		char[] array = key.toCharArray();
+		for(int index = 0; index < array.length; index++) {
+			if(invalidXmlAttributeChar(array[index])) {
+				array[index] = '-';
+			}
+		}
+		
+		return new String(array);
+	}
+
+	public static boolean invalidXmlAttributeChar(char c) {
+		if(c >= 'a' && c <= 'z') {
+			return false;
+		}
+		
+		if(c >= 'A' && c <= 'Z') {
+			return false;
+		}
+	
+		if(c >= '0' && c <= '9') {
+			return false;
+		}
+		
+		return true;
 	}
 	
 }

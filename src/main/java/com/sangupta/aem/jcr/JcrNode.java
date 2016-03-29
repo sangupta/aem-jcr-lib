@@ -136,6 +136,11 @@ public class JcrNode {
 		FileUtils.writeStringToFile(file, contents, UTF_8);
 	}
 	
+	public void saveFile(String fileName, byte[] contents) throws IOException {
+		File file = new File(this.nodePath, fileName);
+		FileUtils.writeByteArrayToFile(file, contents);
+	}
+	
 	public void copyFile(File file) throws IOException {
 		String name = file.getName();
 		File nodeFile = new File(this.nodePath, name);

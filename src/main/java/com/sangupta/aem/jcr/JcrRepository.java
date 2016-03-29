@@ -265,4 +265,58 @@ public class JcrRepository {
 		File filterXml = new File(vault, "filter.xml");
 		FileUtils.writeStringToFile(filterXml, contents);
 	}
+	
+	/**
+	 * Create a new DAM asset in the given folder. All DAM assets are created
+	 * under <code>/content/dam</code> folder.
+	 * 
+	 * @param string
+	 * @param bytes
+	 * @throws IOException 
+	 */
+	public void createDAMAsset(String path, String fileName, byte[] bytes) throws IOException {
+		if(!path.startsWith("/")) {
+			path = "/" + path;
+		}
+		
+		JcrNode node = this.getNode("/content/dam" + path + "/" + fileName);
+		JcrNode renditions = node.getChildNode("_jcr_content/renditions");
+		JcrNode originalDir = renditions.getChildNode("original.dir");
+		
+		// save the original file
+		renditions.saveFile("original", bytes);
+		
+		// create the renditions
+		createRenditionsForDAMAsset(renditions, fileName, bytes);
+		
+		// original.dir .content.xml
+		Map<String, Object> context = new HashMap<>();
+		context.put("user", this.userName);
+		context.put("imageType", getImageMimeType(fileName));
+		String xml = Utils.mergeTemplate("dam/original.dir.content.xml", context);
+		originalDir.saveFile(".content.xml", xml);
+		
+		// create content.xml in node itself
+		context = new HashMap<>();
+		xml = Utils.mergeTemplate("dam/asset.content.xml", context);
+		node.saveFile(".content.xml", xml);
+	}
+
+	private String getImageMimeType(String fileName) {
+		// TODO: fix this
+		return "image/jpeg";
+	}
+
+	/**
+	 * Generate the required renditions for the image.
+	 * 
+	 * @param renditions
+	 * @param fileName
+	 * @param bytes
+	 */
+	private void createRenditionsForDAMAsset(JcrNode renditions, String fileName, byte[] bytes) {
+		// TODO Auto-generated method stub
+		
+	}
+	
 }
