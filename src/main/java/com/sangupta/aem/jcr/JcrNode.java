@@ -126,6 +126,14 @@ public class JcrNode {
 		this.properties.put(name, value);
 	}
 	
+	public void addLongProperty(String name, long value) {
+		this.properties.put(name, "{Long}" + value);
+	}
+	
+	public void addMultiProperty(String name, String value) {
+		this.properties.put(name, "[" + value + "]");
+	}
+	
 	public boolean existsFile(String fileName) {
 		File file = new File(this.nodePath, fileName);
 		return file.exists();
