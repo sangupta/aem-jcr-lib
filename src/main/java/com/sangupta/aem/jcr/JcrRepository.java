@@ -136,6 +136,27 @@ public class JcrRepository {
 		return new JcrNode(nodePath, path, "/".equals(path), this);
 	}
 	
+	/**
+	 * 
+	 * @param path
+	 *            the path of the component in the JCR - like
+	 *            /apps/sangupta/components/page/footerComponent
+	 * 
+	 * @param title
+	 *            the title of the component
+	 * 
+	 * @param parentComponent
+	 *            the parent component for this component - is usually parbase
+	 * 
+	 * @param componentGroup
+	 *            the parent group for the component - the group name under
+	 *            which it will appear in editor.html or content-finder
+	 * 
+	 * @return the {@link JcrNode} that is created as part of this component
+	 * 
+	 * @throws IOException
+	 *             if something fails
+	 */
 	public JcrNode createComponent(String path, String title, String parentComponent, String componentGroup) throws IOException {
 		JcrNode node = getNode(path);
 		
