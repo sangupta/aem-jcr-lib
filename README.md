@@ -20,7 +20,7 @@ The following creates a pageComponent with a basic-template, and then attaches t
 `sangupta.zip` that can be imported directly into AEM via Package Manager. 
 
 ```java
-JcrRepository repository = new JcrRepository("test-repo", "sangupta", "my-packages", "c:/test");
+JcrRepository repository = new FileJcrRepository("test-repo", "sangupta", "my-packages", "c:/test");
 		
 // make sure the requisite file structure is in place
 repository.initialize();
