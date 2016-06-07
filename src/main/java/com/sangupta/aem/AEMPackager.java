@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.zeroturnaround.zip.ZipUtil;
 
+import com.sangupta.aem.jcr.FileJcrRepository;
 import com.sangupta.aem.jcr.JcrRepository;
 
 /**
@@ -29,7 +30,7 @@ public class AEMPackager {
 	}
 
 	/**
-	 * Wrap the {@link JcrRepository} into a ZIP file as a package so that it can be imported
+	 * Wrap the {@link FileJcrRepository} into a ZIP file as a package so that it can be imported
 	 * back into the AEM.
 	 * 
 	 * @param repository

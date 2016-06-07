@@ -8,7 +8,7 @@ import com.sangupta.aem.Utils;
 public class TestJcrApis {
 	
 	public static void main(String[] args) throws IOException {
-		JcrRepository repository = new JcrRepository("test-repo", "sangupta", "my-packages", "c:/test");
+		FileJcrRepository repository = new FileJcrRepository("test-repo", "sangupta", "my-packages", "c:/test");
 		repository.initialize();
 		
 		// make sure the requisite file structure is in place

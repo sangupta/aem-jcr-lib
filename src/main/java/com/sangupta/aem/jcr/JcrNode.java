@@ -12,7 +12,7 @@ import com.sangupta.aem.xml.XmlHelper;
 import com.sangupta.jerry.util.AssertUtils;
 
 /**
- * Represents a specific node in the {@link JcrRepository}.
+ * Represents a specific node in the {@link FileJcrRepository}.
  * 
  * @author sangupta
  *
