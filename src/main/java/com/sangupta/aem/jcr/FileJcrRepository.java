@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import com.sangupta.aem.Utils;
 import com.sangupta.aem.vault.VaultHelper;
+import com.sangupta.aem.xml.XmlHelper;
 import com.sangupta.jerry.util.AssertUtils;
 
 public class FileJcrRepository implements JcrRepository {
@@ -153,6 +154,30 @@ public class FileJcrRepository implements JcrRepository {
 		
 		try {
 			node.initialize(map);
+		} catch(IOException e) {
+			LOGGER.error("Unable to initialize the node", e);
+			return null;
+		}
+		
+		return node;
+	}
+	
+	@Override
+	public JcrNode createPage(String path, String title, String template, String slingResourceType, Map<String, String> properties) {
+		JcrNode node = getNode(path);
+		
+		properties.put("cq:lastModified", "{Date}2016-08-26T07:33:03.067Z");
+		properties.put("cq:lastModifiedBy", this.userName);
+		properties.put("cq:template", template);
+		properties.put("jcr:primaryType", "cq:PageContent");
+		properties.put("jcr:title", title);
+		properties.put("sling:resourceType", slingResourceType);
+
+		String contents = XmlHelper.createTag("jcr:content", properties);
+		
+		try {
+			node.addProperty("jcr:primaryType", "cq:Page");
+			node.initialize(null, contents);
 		} catch(IOException e) {
 			LOGGER.error("Unable to initialize the node", e);
 			return null;

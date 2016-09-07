@@ -33,6 +33,8 @@ public class JcrNode {
 	
 	private final Map<String, String> properties = new HashMap<String, String>();
 	
+	private String contents;
+	
 	JcrNode(File nodePath, String path, boolean isRootNode, JcrRepository repository) {
 		this.nodePath = nodePath;
 		this.path = path;
@@ -69,6 +71,10 @@ public class JcrNode {
 	}
 	
 	public boolean initialize(Map<String, String> properties) throws IOException {
+		return this.initialize(properties, (String) null);
+	}
+	
+	public boolean initialize(Map<String, String> properties, String contents) throws IOException {
 		if(this.xmlFile.exists()) {
 			return false;
 		}
@@ -76,7 +82,6 @@ public class JcrNode {
 		// add basic properties
 		this.addProperty("xmlns:sling", "http://sling.apache.org/jcr/sling/1.0");
 		this.addProperty("xmlns:jcr", "http://www.jcp.org/jcr/1.0");
-		this.addProperty("xmlns:rep", "internal");
 		this.addProperty("xmlns:cq", "http://www.day.com/jcr/cq/1.0");
 		
 		if(this.isRepositoryRoot()) {
@@ -90,6 +95,8 @@ public class JcrNode {
 		if(AssertUtils.isNotEmpty(properties)) {
 			this.properties.putAll(properties);
 		}
+		
+		this.contents = contents;
 		
 		// save properties back to disk
 		this.saveProperties();
@@ -176,7 +183,7 @@ public class JcrNode {
 	 */
 	private void saveProperties() throws IOException {
 		FileUtils.writeStringToFile(this.xmlFile, XmlHelper.XML_HEADER);
-		FileUtils.writeStringToFile(this.xmlFile, XmlHelper.createTag("jcr:root", this.properties), true);
+		FileUtils.writeStringToFile(this.xmlFile, XmlHelper.createTag("jcr:root", this.properties, this.contents), true);
 	}
 
 }

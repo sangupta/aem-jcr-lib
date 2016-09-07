@@ -2,6 +2,7 @@ package com.sangupta.aem.jcr;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
 
 public interface JcrRepository {
 
@@ -37,16 +38,8 @@ public interface JcrRepository {
 	public JcrNode createComponent(String path, String title, String parentComponent, String componentGroup);
 
 	public JcrNode createTemplate(String path, String title, long ranking, String baseComponent);
-
-	public File getRootFolder();
-
-	/**
-	 * Update filter.xml and other files within the repository to current contents
-	 * on disk.
-	 * @throws IOException 
-	 * 
-	 */
-	public void updateFilters() throws IOException;
+	
+	public JcrNode createPage(String path, String title, String template, String slingResourceType, Map<String, String> properties);
 
 	/**
 	 * Create a new DAM asset in the given folder. All DAM assets are created
@@ -57,5 +50,15 @@ public interface JcrRepository {
 	 * @throws IOException 
 	 */
 	public void createDAMAsset(String path, String fileName, byte[] bytes) throws IOException;
+
+	public File getRootFolder();
+
+	/**
+	 * Update filter.xml and other files within the repository to current contents
+	 * on disk.
+	 * @throws IOException 
+	 * 
+	 */
+	public void updateFilters() throws IOException;
 
 }
